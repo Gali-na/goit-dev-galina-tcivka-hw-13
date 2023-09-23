@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+</head>
+<style>
+.content {
+background-color: lavender;
+padding: 10px;
+height: 500px;
+text-align: left
+}
+ input[type=submit] {
+            width: 10%;
+            background-color:white;
+            padding: 14px 150px;
+            margin: 8px 0;
+            border:none;
+            border-radius: 4px;
+            cursor: pointer;
+            resize: none;
+        }
+
+
+</style>
+<body>
+<div class="content">
+
+    <h3> Editing </h3>
+
+
+    <div>
+        <form action="/note/edit" method="post">
+            <label for="title">title</label>
+            <textarea rows="5" cols="30" th:text="${note.title}" id="title"></textarea>
+            <br>
+            <label for="content">content
+                <textarea rows="5" cols="30" th:text="${note.content}" id="content"></textarea>
+                <br>
+            </label>
+            <input type="hidden" th:value="${note}">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+
+</div>
+</body>
+</html>

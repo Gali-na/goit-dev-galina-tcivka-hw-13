@@ -1,0 +1,19 @@
+package goit.springMVC2;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@SpringBootApplication
+public class SpringMvc2Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringMvc2Application.class, args);
+
+
+
+	}
+
+}

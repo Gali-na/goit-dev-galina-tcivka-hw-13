@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+</head>
+<style>
+.content {
+background-color: lavender;
+padding: 10px;
+height: 500px;
+text-align: left
+}
+      .info {
+            width: 10%;
+            background-color:white;
+            padding: 14px 150px;
+            margin: 8px 0;
+            border:none;
+            border-radius: 4px;
+            cursor: pointer;
+            resize: none;
+        }
+
+</style>
+<body>
+<div class="content">
+
+    <h3  th:text=" 'NOTES '+ ${list.size}"> notes</h3>
+    <div class="info"  th:each="note : ${list}">
+        <p th:text="${note.title}">Title</p>
+        <p th:text="${note.content}">Title</p>
+        <p th:text="${note.id}">Title</p>
+
+
+        <form  action="note/delete" method="post">
+            <input type="hidden" th:value="${note}">
+            <button type="submit">delete</button>
+        </form>
+
+        <form action="/note/edit" method="get">
+            <input type="hidden" name="id" th:value="${note.id}">
+            <input type="submit" value="Edit note">
+        </form>
+
+
+
+        </br>
+    </div>
+
+
+    <form  action="/note" class="info" >
+        <input type="submit" value="menu">
+    </form>
+
+</div>
+</body>
+</html>
