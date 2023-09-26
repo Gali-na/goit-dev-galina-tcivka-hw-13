@@ -1,23 +1,26 @@
 package goit.springMVC2;
-
-import goit.springMVC2.DAO.NoteService;
+import goit.springMVC2.exception.NoteInformationException;
+import goit.springMVC2.exception.NoteNotFoundException;
+import goit.springMVC2.model.Note;
+import goit.springMVC2.model.NoteService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class NoteServiceTest {
+public class NoteServiceTest1 {
+
     private static NoteService noteService;
 
     @BeforeAll
-    private static void getClient() throws ArgumentException {
+    private static void getClient() throws  NoteInformationException {
         noteService = new NoteService();
         populatingList();
     }
 
     @Test
-    void listAll_AddOneNote_GetRightResult() throws ArgumentException {
+    void listAll_AddOneNote_GetRightResult() throws NoteInformationException {
         int countNotBeforeAdding = noteService.listAll().size();
         Note note = new Note();
         note.setTitle("gym");
@@ -29,18 +32,19 @@ class NoteServiceTest {
 
     @Test
     void add_NoteNull_ThrowException() {
-        assertThrows(ArgumentException.class, () -> noteService.add(null));
+
+        assertThrows(NoteInformationException.class, () -> noteService.add(null));
     }
 
     @Test
     void add_NoteTitleEmpty_ThrowException() {
         Note note = new Note();
         note.setTitle("");
-        assertThrows(ArgumentException.class, () -> noteService.add(note));
+        assertThrows(NoteInformationException.class, () -> noteService.add(note));
     }
 
     @Test
-    void add_NoteValid_PositiveResult() throws ArgumentException {
+    void add_NoteValid_PositiveResult() throws NoteInformationException {
         int countNotBeforeAdding = noteService.listAll().size();
         Note note = new Note();
         note.setTitle("housework");
@@ -51,7 +55,7 @@ class NoteServiceTest {
     }
 
     @Test
-    void add_NoteValid_CheckProperties() throws ArgumentException {
+    void add_NoteValid_CheckProperties() throws  NoteInformationException {
         int countNotBeforeAdding = noteService.listAll().size();
         Note note = new Note();
         note.setTitle("car wash");
@@ -63,11 +67,11 @@ class NoteServiceTest {
 
     @Test
     void deleteById_IdNotExist_ThrowException() {
-        assertThrows(ArgumentException.class, () -> noteService.deleteById(0));
+        assertThrows(NoteNotFoundException.class, () -> noteService.deleteById(0));
     }
 
     @Test
-    void deleteById_IdExist_PositiveResult() throws ArgumentException {
+    void deleteById_IdExist_PositiveResult() throws NoteNotFoundException, NoteInformationException {
         Note note = new Note();
         note.setTitle("English language");
         note.setContent("learn English");
@@ -80,14 +84,13 @@ class NoteServiceTest {
     }
 
     @Test
-    void update_NoteExist_PositiveResult() throws ArgumentException {
-         Note note = new Note();
+    void update_NoteExist_PositiveResult() throws NoteNotFoundException, NoteInformationException {
+        Note note = new Note();
         note.setTitle("rest");
         note.setContent("invite friends");
         Note newNote = noteService.add(note);
         newNote.setTitle("holiday");
         noteService.update(newNote);
-        //String title =noteService.getById(newNote.getId()).getTitle();
         assertEquals(noteService.getById(newNote.getId()).getTitle(), "holiday");
     }
 
@@ -97,16 +100,25 @@ class NoteServiceTest {
         note.setId(0);
         note.setTitle("rest");
         note.setContent("invite friends");
-        assertThrows(ArgumentException.class, () -> noteService.update(note));
+        assertThrows(NoteNotFoundException.class, () -> noteService.update(note));
     }
 
+    @Test
+    void update_NoteTitleEmpty_ThrowException() throws NoteInformationException, NoteNotFoundException {
+        Note note = new Note();
+        note.setTitle("rest");
+        note.setContent("invite friends");
+        Note newNote = noteService.add(note);
+        newNote.setTitle("");
+        assertThrows(NoteInformationException.class, () ->  noteService.update(newNote));
+    }
     @Test
     void getById_IdNotExist_ThrowException() {
-        assertThrows(ArgumentException.class, () -> noteService.getById(0));
+        assertThrows(NoteNotFoundException.class, () -> noteService.getById(0));
     }
 
     @Test
-    void getById_IdExist_PositiveResult() throws ArgumentException {
+    void getById_IdExist_PositiveResult() throws NoteNotFoundException, NoteInformationException {
         Note note = new Note();
         note.setTitle("dog");
         note.setContent("walk with the dog");
@@ -114,7 +126,8 @@ class NoteServiceTest {
         assertEquals(noteService.getById(newNote.getId()).getTitle(), "dog");
         assertEquals(noteService.getById(newNote.getId()).getContent(), "walk with the dog");
     }
-    private static void populatingList() throws ArgumentException {
+
+    private static void populatingList() throws NoteInformationException {
         Note note = new Note();
         note.setTitle("gym");
         note.setContent("I'm going to the gym");

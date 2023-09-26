@@ -1,70 +1,81 @@
 package goit.springMVC2.controllers;
 
-
-import goit.springMVC2.ArgumentException;
-import goit.springMVC2.DAO.DAONoteService;
-import goit.springMVC2.DAO.NoteService;
-import goit.springMVC2.Note;
-import jakarta.servlet.http.HttpServletRequest;
+import goit.springMVC2.model.Note;
+import goit.springMVC2.exception.NoteInformationException;
+import goit.springMVC2.exception.NoteNotFoundException;
+import goit.springMVC2.model.NoteService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 
 @RequiredArgsConstructor
-@Controller
-@RequestMapping("/note")
+@RequestMapping(value="/note")
+@RestController
 public class NoteController {
 
-   final DAONoteService daoNoteService;
-   @GetMapping()
-    public ModelAndView getGreeting() {
-        ModelAndView result = new ModelAndView("note");
-        return result;
-    }
-    @GetMapping("/add")
-    public  ModelAndView  getForm() {
-        ModelAndView result = new ModelAndView("add");
-        return result;
-    }
-    @PostMapping("/add")
-    public  ModelAndView addNote(@RequestBody Note note){
-        ModelAndView result = new ModelAndView("add");
-        try { daoNoteService.add(note);
-       } catch (ArgumentException e) {
-          result.addObject("warning",e.getMessage());
-           return result;
-       }
-        result.addObject("warning","new note created");
-        return result;
-    }
-    @PostMapping("/delete")
-    public  void deleteNote(@RequestBody Note note,
-                            HttpServletResponse resp) throws ArgumentException, IOException {
-        daoNoteService.deleteById(note.getId());
-        resp.sendRedirect("/note/list");
-    }
-    @GetMapping("/list")
-    public  ModelAndView getAllNote() throws ArgumentException {
-        ModelAndView result = new ModelAndView("list");
-        result.addObject("list",daoNoteService.listAll());
-        return result;
+    private final NoteService noteService;
+
+    @GetMapping(value = "/list")
+    public ModelAndView listAll() {
+        ModelAndView modelAndView = new ModelAndView("list");
+        modelAndView.addObject("notes",noteService.listAll());
+        return modelAndView;
     }
 
-    @GetMapping("/edit")
-    public  ModelAndView  getFormEdit(@RequestParam(name = "id") long id) throws ArgumentException {
-        ModelAndView result = new ModelAndView("edit");
-        result.addObject("note",daoNoteService.getById(id) );
-        return result;
+    @GetMapping(value = "/create")
+    public ModelAndView createNote(){
+        return new ModelAndView("create");
     }
-    @PostMapping("/edit")
-    public  void seveEditedNote(@RequestBody Note note,
-                            HttpServletResponse resp) throws ArgumentException, IOException {
-        daoNoteService.update(note);
-        resp.sendRedirect("/note/list");
+    @PostMapping(value = "/create")
+    public void createNote(@RequestParam(name = "title") String title,
+                           @RequestParam(name = "content") String content, HttpServletResponse http ) throws IOException {
+        Note note = new Note();
+        note.setTitle(title);
+        note.setContent(content);
+        try {
+            noteService.add(note);
+        } catch (NoteInformationException e) {
+            http.sendRedirect("/note/createBadResponse");
+            return;
+        }
+        http.sendRedirect("/note/list");
+    }
+    @GetMapping(value = "/delete/{id}")
+    public void deleteNote(@PathVariable ("id") long id, HttpServletResponse http) throws IOException,NoteNotFoundException {
+        noteService.deleteById(id);
+        http.sendRedirect("/note/list");
+    }
+
+    @GetMapping(value = "/edit")
+    public ModelAndView editNote(@RequestParam ("id") long id) throws NoteNotFoundException {
+        Note byId = noteService.getById(id);
+        ModelAndView modelAndView = new ModelAndView("edit");
+        modelAndView.addObject(byId);
+        return modelAndView;
+
+    }
+    @PostMapping(value ="/edit")
+    public void editNote(@RequestParam(name = "id") long id,
+                         @RequestParam(name = "title") String title,
+                         @RequestParam(name = "content") String content, HttpServletResponse http) throws IOException, NoteNotFoundException {
+        Note note = new Note();
+        note.setId(id);
+        note.setContent(content);
+        note.setTitle(title);
+        try {
+            noteService.update(note);
+        } catch (NoteInformationException e) {
+            http.sendRedirect("/note/createBadResponse");
+            return;
+        }
+        http.sendRedirect("/note/list");
+    }
+    @GetMapping(value ="/createBadResponse")
+    public ModelAndView getCreateBadResponse() {
+        ModelAndView modelAndView = new ModelAndView("createBadResponse");
+        return modelAndView;
     }
 }

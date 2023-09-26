@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -11,30 +11,28 @@
 </head>
 <body>
 
-<form action="/note/edit" method="post">
+<form action="/note/create" method="POST" >
     <div class="container mt-3">
         <div class="card">
             <div class="card-header"  style="display:flex; justify-content: space-between">
-                <h4>Edit note</h4></div>
+                <h4>Create new note</h4></div>
             <div class="card-body">
 
                 <label for="title" class="form-label">Enter title</label>
                 <div class="input-group mb-3">
-                    <textarea rows="3" cols="10" th:text="${note.title}" name="title" id="title" class="form-control"></textarea>
+                    <input type="text" class="form-control" id="title" name="title">
                 </div>
                 <label for="content" class="form-label">Enter content</label>
                 <div class="input-group mb-3">
-                    <textarea rows="5" cols="30" th:text="${note.content}" id="content"  name="content" class="form-control"></textarea>
+                    <input type="text" class="form-control" id="content" name="content">
                 </div>
-                <input type="hidden" th:value="${note.id}" name="id" >
 
             </div>
             <div class="card-footer">
-                <button type="submit"  class="btn btn-primary">submit</button>
+                <button type="submit"  class="btn btn-primary">Add note</button>
             </div>
         </div>
     </div>
 </form>
 </body>
 </html>
-
